@@ -1,0 +1,49 @@
+/* Kod drzewa wziąłem stąd https://github.com/KnIfER/RBTree-java
+Dopisałem 2 własne emtody i zmienilem sposob dodwania elementu jesli napotkal element o takiej samej porownywanej wartosci(podmienial 
+tamten element i zapisywal go w specjalnej zmiennej)
+Nowe metody:*/
+public T findsmallestbigger(T key){
+        if(key == null){
+            return null;
+        }
+        RBTNode<T> node = search(key);
+        if(node.right !=null){
+            RBTNode<T> temp = node.right;
+            while (temp.left != null){
+                temp = temp.left;
+            }
+            return temp.key;
+        }else {
+            RBTNode<T> temp = node;
+            while (temp.parent!=null) {
+                if (temp.isleftchild()) {
+                    return temp.parent.key;
+                }else {
+                    temp = temp.parent;
+                }
+            }
+        }return null;
+    }
+
+    public T findsmallestsmaller(T key){
+        if(key == null){
+            return null;
+        }
+        RBTNode<T> node = search(key);
+        if(node.left !=null){
+            RBTNode<T> temp = node.left;
+            while (temp.right != null){
+                temp = temp.right;
+            }
+            return temp.key;
+        }else {
+            RBTNode<T> temp = node;
+            while (temp.parent!=null) {
+                if (!temp.isleftchild()) {
+                    return temp.parent.key;
+                }else {
+                    temp = temp.parent;
+                }
+            }
+        }return null;
+    }
