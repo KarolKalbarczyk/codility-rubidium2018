@@ -1,0 +1,104 @@
+
+class Solution {
+    Help[] helpersX;
+    RBTree<Help> tree = new RBTree<>();
+    int deletionstart = 0;
+    long mindistance = 0;
+    int dist = 5000000;
+    Help[] answerarray = new Help[2];
+
+    public int solution(int[] X, int[] Y) {
+        helpersX = new Help[X.length];
+        for (int i = 0; i < X.length; i++) {
+            helpersX[i] = new Help(X[i], Y[i]);
+        }
+        if (X.length > 30) {
+            Arrays.parallelSort(helpersX, (o1, o2) ->  o1.x - o2.x);
+        } else {
+            Arrays.sort(helpersX, (o1, o2) -> o1.x - o2.x);
+        }
+
+        helpersX[0].calculatedistance(helpersX[1]);
+        for (int i = 0; i < helpersX.length; i++) {
+            if(i == 9999){
+                int x = 10;
+            }
+            if(mindistance == 2384){
+                int x;
+            }
+            tree.insert(helpersX[i]);
+                System.out.println("mindistance" + mindistance);
+            Help firstsmaller = tree.findsmallestsmaller(helpersX[i]);
+            Help secondsmaller = tree.findsmallestsmaller(firstsmaller);
+            Help firstbigger = tree.findsmallestbigger(helpersX[i]);
+            Help secondbigger = tree.findsmallestbigger(firstbigger);
+            if (i != 0) {
+                System.out.println("searched " + helpersX[i] + " " + helpersX[i - 1]);
+            }
+            System.out.println("f smaller" + firstsmaller);
+            System.out.println("f bbigger " + firstbigger);
+            System.out.println("s bigger " + secondbigger);
+            System.out.println("s smaller " + secondsmaller);
+            System.out.println("duplicate " + tree.duplicate);
+            helpersX[i].covers(firstsmaller);
+            helpersX[i].covers(secondsmaller);
+            helpersX[i].covers(secondbigger);
+            helpersX[i].covers(firstbigger);
+            helpersX[i].covers(tree.duplicate);
+        }
+        System.out.println(check(helpersX));
+        System.out.println(Arrays.toString(answerarray));
+
+        return dist;
+    }
+
+    public void deletion(int currentIndex) {
+        for (int i = deletionstart; i < helpersX.length; i++) {
+            if (helpersX[currentIndex].x - helpersX[i].x > dist*2) {
+                tree.remove(helpersX[i]);
+            } else {
+                deletionstart = i;
+                break;
+            }
+        }
+    }
+
+    class Help implements Comparable<Help> {
+        int x;
+        int y;
+
+        public Help(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public String toString() {
+            return (x + " " + y);
+        }
+
+        @Override
+        public int compareTo(Help o) {
+            if (o.y > y) {
+                return -1;
+            }
+            if (o.y < y) {
+                return 1;
+            } else return 0;
+        }
+        
+        public void covers(Help h){
+        if(h==null){
+            return;
+        }
+        int ydistance = Math.abs(this.y - h.y);
+        int xdistance = Math.abs(this.x - h.x);
+        if(xdistance<dist*2 && ydistance<dist*2){
+            if(ydistance>xdistance){
+                dist = ydistance/2;
+            }else {
+                dist = xdistance/2;
+            }
+        }
+    }
+}
+
